@@ -7,7 +7,8 @@
       logger = console.log.bind(console),
       ready
     } = options;
-    let worker = new Worker('qpdf-worker.js');
+    const path = QPDF.path || '';
+    let worker = new Worker(path + 'qpdf-worker.js');
 
     const listeners = {};
     let nListeners = 0;

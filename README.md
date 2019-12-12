@@ -15,7 +15,8 @@
 ```js
 QPDF.encrypt({
   arrayBuffer: data,
-  password: 'hardtoguess',
+  userPassword: 'hardtoguess',
+  ownerPassword: 'hardtoguess',
   callback: function (err, arrayBuffer) {
     if (err) {
       alert(err.message);
@@ -65,7 +66,15 @@ Copy `src/*.js` to some directory. Import qpdf.js from your
 HTML.
 
 ```html
-<script type="text/javascript" src="/path/to/qpdf.js"></script>
+<script type="text/javascript" src="/path/qpdf.js"></script>
+```
+
+Beware, if it's not in the same directory as your HTML file, you need to tell
+QPDF where the qpdf-worker.js file is located relative to your `.html` file,
+or as an absolute path.
+
+```js
+QPDF.path = '/path/'; // must end with a '/'
 ```
 
 ## Description
