@@ -8,9 +8,65 @@
 - encrypt and password-protect PDF files
 - merge and split PDFs
 
-## Usage
+## Example Usage
 
+#### encrypt a PDF file
 
+```js
+QPDF.encrypt({
+  arrayBuffer: data,
+  password: 'hardtoguess',
+  callback: function (err, arrayBuffer) {
+    if (err) {
+      alert(err.message);
+    } else {
+      sendFile(arrayBuffer);
+    }
+  }
+});
+```
+
+#### execute custom QPDF commands
+
+List QPDF command line arguments:
+
+```js
+QPDF({
+  logger: function (text) {
+    console.log(text);
+  },
+  ready: function (qpdf) {
+    qpdf.execute(['--help']);
+  }
+});
+```
+
+Decrypt a PDF file:
+
+```js
+QPDF({
+  ready: function (qpdf) {
+    qpdf.save('input.pdf', arrayBuffer);
+    qpdf.execute(['--decrypt', '--password', 'hardtoguess', '--', 'input.pdf', 'output.pdf']);
+    qpdf.load('output.pdf', function (err, arrayBuffer) {
+      if (err) {
+        alert(err.message);
+      } else {
+        sendFile(arrayBuffer);
+      }
+    });
+  }
+});
+```
+
+## Installation
+
+Copy `src/*.js` to some directory. Import qpdf.js from your
+HTML.
+
+```html
+<script type="text/javascript" src="/path/to/qpdf.js"></script>
+```
 
 ## Description
 
@@ -74,6 +130,143 @@ The version distributed with this library has been compiled by
 repository](https://github.com/jrmuizel/qpdf.js).
 
 Unfortunately it's not the latest version.
+
+## API
+
+### QPDF.encrypt(options)
+
+> Create an ecrypted version of a PDF document
+
+Options:
+
+- `logger`: A `function(txt)` used for logging QPDF output.
+- `arrayBuffer`: Input PDF data encoded in an [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer).
+- `userPassword`: The user password _(default: empty string)_.
+- `ownerPassword`: The owner password _(default: empty string)_.
+- `keyLength`: may be `40`, `128`, or `256` _(default)_.
+- `callback`: A `function(err, arrayBuffer)` called when processing is done.
+
+Either or both of the user password and the owner password may be
+empty strings.
+
+**Example:**
+
+```js
+QPDF.encrypt({
+  arrayBuffer: new Uint8Array(someData).buffer,
+  userPassword: 'hardtoguess',
+  ownerPassword: 'hardtoguess',
+  callback: function (err, arrayBuffer) {
+    if (err) {
+      alert(err.message);
+    } else {
+      sendFile(arrayBuffer);
+    }
+  }
+});
+```
+
+### QPDF(options)
+
+> Start QPDF
+
+`options` is an object with 2 fields:
+
+- `ready`: Function called when QPDF is ready to receive commands.
+- `logger`: A customer logger for QPDF output _(default to console.log)_
+
+The `ready` callback takes a qpdf instance as its argument,
+which you will use to send commands, such as `qpdf.load()`,
+`qpdf.save()` and `qpdf.execute()` (see below).
+
+In most common cases, you'll want to first *save* a file into
+QPDF's execution environment, then *execute* QPDF with some
+arguments, then *load* the resulting file.
+
+Commands are run sequencially, in the same order as they are
+emitted, so you don't have to wait for the previous command to
+finish before sending the next one.
+
+**Example:**
+
+```js
+QPDF({
+  ready: function (qpdf) {
+    qpdf.save('input.pdf', arrayBuffer);
+    qpdf.execute(['--some-arguments', '--', 'input.pdf', 'output.pdf']);
+    qpdf.load('output.pdf', function (err, arrayBuffer) {
+      ...
+    });
+  }
+});
+```
+
+### qpdf.save(filename, arrayBuffer, callback)
+
+> Saves a file to QPDF's virtual file system.
+
+Data has to be provided as an [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer).
+
+The callback is optional.
+
+**Example:**
+
+```js
+qpdf.save('file.pdf', arrayBuffer, function(err) {
+  if (err)
+    alert(err.message);
+  else
+    console.log('file saved');
+});
+```
+
+### qpdf.execute([args], callback)
+
+> Execute a command with QPDF.
+
+`args` is an array of strings, containing the arguments to
+pass the QPDF command line tool.
+
+The callback is optional.
+
+**Example:**
+
+```js
+qpdf.execute(['--help'], function(err) {
+  if (err)
+    alert(err.message);
+});
+```
+
+### qpdf.load(filename, callback)
+
+> Loads a file from QPDF's virtual file system.
+
+Data will be provided to the callback as an
+[ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer).
+
+**Example:**
+
+```js
+qpdf.load('output.pdf', function (err, arrayBuffer) {
+  if (err) {
+    alert(err.message);
+  } else {
+    console.log('it worked');
+    sendFile(arrayBuffer);
+  }
+});
+```
+
+### QPDF.base64ToArrayBuffer(base64)
+
+> Convert a base64 string to an
+> [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer).
+
+### QPDF.arrayBufferToBase64(arrayBuffer)
+
+> Convert an [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer)
+> to a base64 string.
 
 ## License and Copyright
 

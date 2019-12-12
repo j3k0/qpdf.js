@@ -55,13 +55,14 @@ onmessage = function (event) {
     case 'execute': {
       const args = message.args;
       stdout('$ qpdf ' + args.join(' '));
-      // Module['callMain'](['--decrypt', 'input.pdf', 'output.pdf']);
-      // Module['callMain'](['--help']);
-      // Module.callMain(['--encrypt', 'test', 'test', '256', '--', 'input.pdf', 'output.pdf']);
+      let exitStatus = -1;
+      Module.onExit = function (status) {
+        exitStatus = status;
+      };
       Module.callMain(args);
       postMessage({
-        type: 'executed'
-        // data: getFileData('output.pdf')
+        type: 'executed',
+        status: exitStatus
       });
       break;
     }
