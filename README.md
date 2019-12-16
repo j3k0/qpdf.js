@@ -62,8 +62,11 @@ QPDF({
 
 ## Installation
 
-Copy `src/*.js` to some directory. Import qpdf.js from your
-HTML.
+Copy `src/*.js` to some directory. You can retrieve the files from this repository or using npm: 
+
+    npm install qpdf.js
+
+Then import qpdf.js from your HTML.
 
 ```html
 <script type="text/javascript" src="/path/qpdf.js"></script>
