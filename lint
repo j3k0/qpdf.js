@@ -1,2 +1,0 @@
-#!/bin/bash
-semistandard src/qpdf.js src/qpdf-worker.js "$@"
