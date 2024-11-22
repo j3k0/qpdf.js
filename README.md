@@ -138,10 +138,7 @@ The command line tool is ran from a separate thread (a web
 worker).
 
 The version distributed with this library has been compiled by
-@jrmuizel and pulled from [this
-repository](https://github.com/jrmuizel/qpdf.js).
-
-Unfortunately it's not the latest version.
+@j3k0 using [this fork](https://github.com/j3k0/qpdf).
 
 ## API
 
